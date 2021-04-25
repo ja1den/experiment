@@ -33,7 +33,7 @@ const scenarios: Function[] = [
 		for (let i = 0; i < 10; i++) {
 			const numbers: string[] = [];
 
-			for (let j = 0; j < 100000; j++) {
+			for (let j = 0; j < 1000000; j++) {
 				const number = Math.floor(Math.random() * Math.pow(10, 8));
 				const string = number.toString().padStart(8, '0');
 
