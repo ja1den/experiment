@@ -5,7 +5,7 @@ const fs = require('fs');
 // Main
 async function main() {
 	// Resolve Directories
-	const root = path.resolve(process.cwd(), '..', '..', '..');
+	const root = path.resolve(process.cwd(), '..');
 
 	const iPath = path.resolve(root, 'data', 'input');
 	const oPath = path.resolve(root, 'data', 'js');

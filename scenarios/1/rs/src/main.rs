@@ -6,7 +6,7 @@ fn main() {
     // Resolve Directories
     let root = env::current_dir()
         .unwrap()
-        .join("../../..")
+        .join("..")
         .canonicalize()
         .unwrap();
 
