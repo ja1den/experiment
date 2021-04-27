@@ -4,7 +4,7 @@ import fs from 'fs';
 
 import { spawnSync } from 'child_process';
 
-import { Scenario, ScenarioData, Result } from '../index';
+import { Scenario, ScenarioData } from '../index';
 
 // Resolve Directories
 const root = path.resolve(__dirname, '..', '..', 'scenarios', '1');
@@ -24,7 +24,7 @@ const paths = {
 // Define Scenario
 const scenario: Scenario = {
 	name: 'File I/O',
-	call: async (sizes) => {
+	call: async () => {
 		// Results
 		const results: ScenarioData = {
 			js: { results: [], bundle: 0 },
@@ -32,7 +32,7 @@ const scenario: Scenario = {
 		};
 
 		// Loop through Cases
-		for (const size of sizes) {
+		for (const size of [10000, 100000, 1000000]) {
 			// Purge Data
 			fs.rmdirSync(path.resolve(path.resolve(root, 'data')), { recursive: true });
 
@@ -74,8 +74,8 @@ const scenario: Scenario = {
 		}
 
 		// Bundle Size
-		const js = spawnSync('du -sb ../../scenarios/1/js', { cwd: __dirname, shell: true });
-		const rs = spawnSync('du -sb ../../scenarios/1/rs/target/release', { cwd: __dirname, shell: true });
+		const js = spawnSync('du -sb ' + paths.src.js, { cwd: __dirname, shell: true });
+		const rs = spawnSync('du -sb ' + path.resolve(paths.src.rs, 'target', 'release'), { cwd: __dirname, shell: true });
 
 		results.js.bundle = parseInt(js.stdout!.toString().split(' ')[0]);
 		results.rs.bundle = parseInt(rs.stdout!.toString().split(' ')[0]);

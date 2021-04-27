@@ -1,7 +1,7 @@
 // Import
 use std::{env, fs, io};
 
-// Main
+// Main Function
 fn main() {
     // Resolve Directories
     let root = env::current_dir()
