@@ -29,15 +29,22 @@ const scenario: Scenario = {
 		// Loop through Cases
 		for (const size of [100, 1000, 10000]) {
 			await Promise.all([
-				new Promise<void>(async resolve => {
+				new Promise<void>(async (resolve, reject) => {
 					// Run Command
 					const js = spawn('time --format \'%e %M\' node src/index.js ' + size, { cwd: paths.src.js, shell: true });
+
+					// Handle Errors
+					let complete = 0;
+
+					js.on('close', () => complete !== 1 && reject());
 
 					// Server Ready
 					await new Promise(resolve => js.stdout.on('data', resolve));
 
 					// Emit Requests
-					for (let i = 0; i < size; i++) await axios.get('http://localhost:3000/');
+					for (let i = 0; i < size; i++) await axios.get('http://localhost:3000/').catch(() => { });
+
+					complete = 1;
 
 					// Parse Results
 					const split = await new Promise<string>(resolve => js.stderr.on('data', data => resolve(data.toString().trim().split(' '))));
@@ -46,15 +53,22 @@ const scenario: Scenario = {
 					// Resolve Promise
 					resolve();
 				}),
-				new Promise<void>(async resolve => {
+				new Promise<void>(async (resolve, reject) => {
 					// Run Command
 					const rs = spawn('time --format \'%e %M\' cargo run --release --quiet ' + size, { cwd: paths.src.rs, shell: true });
+
+					// Handle Errors
+					let complete = 0;
+
+					rs.on('close', () => complete !== 1 && reject());
 
 					// Server Ready
 					await new Promise(resolve => rs.stdout.on('data', resolve));
 
 					// Emit Requests
 					for (let i = 0; i < size; i++) await axios.get('http://localhost:4000').catch(() => { });
+
+					complete = 1;
 
 					// Parse Results
 					const split = await new Promise<string>(resolve => rs.stderr.on('data', data => resolve(data.toString().trim().split(' '))));
@@ -63,7 +77,7 @@ const scenario: Scenario = {
 					// Resolve Promise
 					resolve();
 				})
-			]);
+			]).catch(() => console.log('Error!'));
 		}
 
 		// Bundle Size
