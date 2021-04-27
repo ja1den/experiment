@@ -3,7 +3,7 @@
 	"license": "MIT",
 	"author": "Jaiden Douglas",
 	"scripts": {
-		"kill": "kill $(lsof -ti:3000)",
+		"kill": "kill $(lsof -ti:3000) & kill $(lsof -ti:4000)",
 		"start": "ts-node-script src/index.ts",
 		"lint": "sort-package-json"
 	},
