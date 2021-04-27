@@ -89,7 +89,7 @@ async function main() {
 			// Entries
 			for (let i = 0; i < column[1].length; i++) {
 				parsed[i + 2] = [...(parsed[i + 2] ?? []), !isNaN(parseInt(column[1][i].toString()))
-					? column[1][i].toString().padEnd(length, ' ').yellow
+					? column[1][i].toString().padStart(length, ' ').yellow
 					: column[1][i].toString().padEnd(length, ' ')
 				];
 			}
