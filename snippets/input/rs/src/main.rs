@@ -7,8 +7,8 @@ fn main() {
 	let input = &env::args().collect::<Vec<String>>()[1];
 
 	// Parse the string into a number.
-	let parsed_input: i32 = input.parse().unwrap();
+	let input: i32 = input.parse().unwrap();
 
 	// Log the number to the console.
-	println!("{}", parsed_input);
+	println!("{}", input);
 }
