@@ -10,5 +10,5 @@ fn main() {
 	let parsed_input: i32 = input.parse().unwrap();
 
 	// Log the number to the console.
-	println!("{}", parsed_input + 1);
+	println!("{}", parsed_input);
 }
