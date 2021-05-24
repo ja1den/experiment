@@ -10,58 +10,84 @@ import 'colors';
 // Types
 export interface Scenario {
 	name: string;
-	call: () => Promise<ScenarioData>;
-}
-
-export interface ScenarioData {
-	js: {
-		results: Result[];
-		bundle: number;
-	};
-	rs: {
-		results: Result[];
-		bundle: number;
-	};
+	call: () => Promise<{
+		js: Result;
+		rs: Result;
+	}>;
 }
 
 export interface Result {
-	duration: number;
-	memory: number;
+	data: {
+		duration: Record<number, number[]>;
+		memory: Record<number, number[]>;
+	};
+	bundle: number;
+}
+
+// Functions
+
+/**
+ * Import all the scenarios in a directory.
+ * @param directory The target directory.
+ * @returns The imported scenarios.
+ */
+async function importScenarios(directory: string) {
+	// Scenario Names
+	const names = fs.readdirSync(directory).filter(name => name !== '2.ts'); // ### FIX THIS LINE! ###
+
+	// Import
+	const scenarios: Scenario[] = await Promise.all(names.map(async name => {
+		return (await import(path.resolve(__dirname, 'scenarios', name))).default;
+	}));
+
+	// Return Scenarios
+	return scenarios;
+}
+
+/**
+ * Run a scenario, returning the generated data.
+ * @param scenario The scenario to run.
+ * @returns The generated data.
+ */
+async function runScenario(scenario: Scenario) {
+	// Scenario Name
+	console.log((' ' + scenario.name + ' ').black.bgGreen + '\n');
+
+	// Loading
+	let step = 1;
+
+	const loadInterval = setInterval(() => {
+		readline.cursorTo(process.stdout, 0);
+		process.stdout.write('.'.repeat(step++ % 4).padEnd(3, ' ').cyan);
+	}, 400);
+
+	// Run Scenario
+	const data = await scenario.call();
+
+	// Loading
+	readline.cursorTo(process.stdout, 0);
+	clearInterval(loadInterval);
 }
 
 // Main
 async function main() {
-	// Read Names
-	const names = fs.readdirSync(path.resolve(__dirname, 'scenarios'));
+	// Read Scenarios
+	const scenarios = await importScenarios(path.resolve(__dirname, 'scenarios'));
+	console.log(scenarios);
 
-	// Node Binary
-	const spawn = spawnSync('du -sb $(awk -F \' \' \'{print $2}\' <<< $(whereis node))', { shell: '/bin/bash' });
-	const size = parseInt(spawn.stdout.toString().match(/\d+/)![0]);
+	/*
 
 	// Loop through Names
 	for (const name of names) {
 		// Import Scenario
-		const { default: scenario }: { default: Scenario } = await import(path.resolve(__dirname, 'scenarios', name));
-
-		// Scenario Name
-		console.log((' ' + scenario.name + ' ').black.bgGreen + '\n');
-
-		// Loading
-		let step = 1;
-
-		const loadInterval = setInterval(() => {
-			readline.cursorTo(process.stdout, 0);
-			process.stdout.write('.'.repeat(step++ % 4).padEnd(3, ' ').cyan);
-		}, 400);
+		const { default: scenario }: { default: Scenario } = ;
 
 		// Run Scenario
-		const data = await scenario.call();
 
-		data.js.bundle += size;
 
-		// Loading
-		readline.cursorTo(process.stdout, 0);
-		clearInterval(loadInterval);
+
+
+		/*
 
 		// Table Data
 		const columns: ([string, (string | number)[]])[] = [];
@@ -100,6 +126,17 @@ async function main() {
 
 		// Log Newline
 		if (name !== names[names.length - 1]) console.log('');
+
 	}
+
+		*/
+
+	/*
+
+	// Bundle Sizes
+	const spawn = spawnSync('du -sb $(awk -F \' \' \'{print $2}\' <<< $(whereis node))', { shell: '/bin/bash' });
+	const node = parseInt(spawn.stdout.toString().match(/\d+/)![0]);
+
+	*/
 }
 main();

@@ -4,7 +4,7 @@ import fs from 'fs';
 
 import { spawnSync } from 'child_process';
 
-import { Scenario, ScenarioData } from '../index';
+import { Scenario } from '../index';
 
 // Resolve Directories
 const root = path.resolve(__dirname, '..', '..', 'scenarios', '1');
@@ -25,6 +25,26 @@ const paths = {
 const scenario: Scenario = {
 	name: 'File I/O',
 	call: async () => {
+		console.log('aaa');
+
+		return {
+			js: {
+				data: {
+					duration: [],
+					memory: []
+				},
+				bundle: 0
+			},
+			rs: {
+				data: {
+					duration: [],
+					memory: []
+				},
+				bundle: 0
+			}
+		};
+
+		/*
 		// Results
 		const results: ScenarioData = {
 			js: { results: [], bundle: 0 },
@@ -82,6 +102,7 @@ const scenario: Scenario = {
 
 		// Return Results
 		return results;
+		*/
 	}
 }
 
